@@ -1,0 +1,25 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Notification System API",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "NODE_ENV=test jest",
+    "test:db": "chmod +x ../scripts/setup-test-db.sh && ../scripts/setup-test-db.sh",
+    "test:conn": "../scripts/test-db-connection.sh",
+    "test:api": "NODE_ENV=test node tests/api.test.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15"
+  }
+}
