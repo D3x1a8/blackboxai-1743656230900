@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+a {
+  @apply text-blue-600 hover:text-blue-800 transition-colors;
+}
+
+/* Custom styles for rich text content */
+.prose {
+  @apply max-w-none;
+}
+.prose h2 {
+  @apply text-xl font-bold mt-6 mb-4;
+}
+.prose p {
+  @apply mb-4;
+}
+.prose ul {
+  @apply list-disc pl-5 mb-4;
+}
