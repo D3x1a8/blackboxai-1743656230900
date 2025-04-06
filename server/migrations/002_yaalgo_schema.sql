@@ -1,9 +1,26 @@
--- Add supplier/seller relationships
-ALTER TABLE users ADD COLUMN business_name VARCHAR(255);
-ALTER TABLE users ADD COLUMN contact_info JSONB;
+-- Create users table if it does not exist
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Add supplier/seller relationships if columns do not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='business_name') THEN
+        ALTER TABLE users ADD COLUMN business_name VARCHAR(255);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='contact_info') THEN
+        ALTER TABLE users ADD COLUMN contact_info JSONB;
+    END IF;
+END $$;
 
 -- Create supplier profiles
-CREATE TABLE supplier_profiles (
+CREATE TABLE IF NOT EXISTS supplier_profiles (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
   business_registration VARCHAR(255),
@@ -12,20 +29,31 @@ CREATE TABLE supplier_profiles (
 );
 
 -- Create seller profiles
-CREATE TABLE seller_profiles (
+CREATE TABLE IF NOT EXISTS seller_profiles (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
   ecommerce_platforms JSONB,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Modify products table
-ALTER TABLE products ADD COLUMN supplier_id INTEGER REFERENCES users(id);
-ALTER TABLE products ADD COLUMN cost_price DECIMAL(10,2);
-ALTER TABLE products ADD COLUMN margin_percent DECIMAL(5,2) DEFAULT 0.20;
+-- Modify products table if columns do not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='supplier_id') THEN
+        ALTER TABLE products ADD COLUMN supplier_id INTEGER REFERENCES users(id);
+    END IF;
 
--- Create orders table
-CREATE TABLE orders (
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='cost_price') THEN
+        ALTER TABLE products ADD COLUMN cost_price DECIMAL(10,2);
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='products' AND column_name='margin_percent') THEN
+        ALTER TABLE products ADD COLUMN margin_percent DECIMAL(5,2) DEFAULT 0.20;
+    END IF;
+END $$;
+
+-- Create orders table if it does not exist
+CREATE TABLE IF NOT EXISTS orders (
   id SERIAL PRIMARY KEY,
   product_id INTEGER REFERENCES products(id),
   seller_id INTEGER REFERENCES users(id),
@@ -36,8 +64,8 @@ CREATE TABLE orders (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Create transactions table
-CREATE TABLE transactions (
+-- Create transactions table if it does not exist
+CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY,
   order_id INTEGER REFERENCES orders(id),
   amount DECIMAL(10,2),

@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   const { category } = req.query;
   try {
-    const apiResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/category/${category}`);
+    const apiResponse = await fetch(`http://localhost:3001/products/category/${category}`);
     if (!apiResponse.ok) {
       return res.status(404).json({ error: 'No products found for this category' });
     }

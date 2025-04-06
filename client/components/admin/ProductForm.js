@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getCategories } from '../../../lib/api';
+import { getCategories } from '../../lib/api'; // Updated path
 
 export default function ProductForm({ product, onSubmit }) {
   const router = useRouter();

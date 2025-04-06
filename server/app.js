@@ -1,33 +1,22 @@
 const express = require('express');
-const cors = require('cors');
+const cors = require('cors'); // Import CORS middleware
 const app = express();
-require('dotenv').config();
 
-// Middleware
-app.use(cors());
+// Use CORS middleware
+app.use(cors({
+    origin: 'http://localhost:3000' // Allow requests from the client application
+}));
+
+// Other existing code...
 app.use(express.json());
 
-// Routes
-const authRoutes = require('./routes/authRoutes');
-const healthRoutes = require('./routes/healthRoutes');
-const productRoutes = require('./routes/productRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
-const supplierRoutes = require('./routes/supplierRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
+// Define routes
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/products', require('./routes/productRoutes')); // Ensure product routes are included
+app.use('/api/categories', require('./routes/categoryRoutes')); // Ensure category routes are included
 
-app.use('/api/auth', authRoutes);
-app.use('/health', healthRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/suppliers', supplierRoutes);
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
+// Start the server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
